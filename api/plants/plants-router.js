@@ -1,9 +1,13 @@
 const router = require('express').Router()
 const Plants = require('./plants-model')
 const { checkPlantPayload, checkPlantId} = require('./plants-middleware')
+const { default: jwtDecode } = require('jwt-decode')
+
+
 //An authenticated user can view a list of created plants
 router.get('/', (req, res, next)=>{
-    Plants.getPlants()
+    const decode = jwtDecode(req.headers.authorization)
+    Plants.getPlants(username.decode)
         .then( plants =>{
             res.json(plants)
         })
@@ -15,8 +19,9 @@ router.get('/', (req, res, next)=>{
 //an authenticated user can create a new plant object
 router.post('/', checkPlantPayload, async(req, res, next)=>{
     try{
+        const decode = jwtDecode(req.headers.authorization)
         const { nickname, species, h2oFrequency, image, user_id} = req.body
-        const plant = await Plants.createPlant({ nickname: nickname, species: species, h2oFrequency: h2oFrequency, image: image, user_id: user_id})
+        const plant = await Plants.createPlant({ nickname: nickname, species: species, h2oFrequency: h2oFrequency, image: image, user_id: user_id.decode})
 
         if(plant){
             res.status(201).json(plant)

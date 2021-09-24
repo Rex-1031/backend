@@ -1,7 +1,10 @@
 const db = require('../data/dbConfig')
 
-const getPlants = () => {
-    return db("plants");
+const getPlants = (user_id) => {
+    return db("plants")
+    .where('user_id', user_id)
+    .select('plant_id', 'nickname', 'h2oFrequency', 'image')
+    .orderBy('plant_id')
 };
 
 const getPlantsById = (plant_id) => {

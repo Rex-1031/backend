@@ -3,6 +3,8 @@ const restricted = require("../restricted");
 const Users = require("../auth/auth-model");
 const bcrypt = require("bcryptjs");
 const { checkUserId } = require("./users-middleware");
+const {default: jwtDecode} = require('jwt-decode')
+
 
 router.get("/", (req, res) => {
     Users.find()
@@ -25,7 +27,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.put("/:id", restricted, checkUserId, (req, res, next) => {
+router.put("/:id", checkUserId, (req, res, next) => {
     const credentials = req.body;
 
     if (!credentials.password || !credentials.phoneNumber) {
