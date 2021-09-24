@@ -1,47 +1,52 @@
 const db = require('../data/dbConfig')
 
-const getPlants = (user_id) => {
-    return db("plants")
-    .where('user_id', user_id)
-    .select('plant_id', 'nickname', 'h2oFrequency', 'image')
-    .orderBy('plant_id')
-};
+async function getAllPlants() {
+    let results = await db('plants')
+    return results
+}
 
-const getPlantsById = (plant_id) => {
-    return db("plants").where("plant_id", plant_id).first();
-};
+function getPlantById(plant_id) {
+    return db('plants as p')
+    .select('p.user_id', 'p.nickname', 'p.species', 'p.h2oFrequency', 'p.image')
+    .where('p.plant_id', plant_id).first()
+}
 
-const createPlant = (plant) => {
-    return db("plants").insert(plant, [
-        "plant_id",
-        "nickname",
-        "species",
-        "h2oFrequency",
-        "image",
-    ]);
-};
+async function getByNickname(filter) {
+    let results = await db('plants').where(filter)
+    return results
+}
 
-const updatePlant = async (plant_id, plant) => {
-    return db("plants")
-    .where("plant_id", plant_id)
-    .update(plant, [
-        "plant_id",
-        "nickname",
-        "species",
-        "h2oFrequency",
-        "image",
-    ]);
-};
+function getBySpecies(filter) {
+    return db('users').where(filter)
+}
 
-const deletePlant = async (plant_id) => {
-    return db("plants").where("plant_id", plant_id).del();
-};
+async function addPlant(plant) {
+    const [newPlantObject] = await db('plants').insert(plant, ['user_id', 'nickname', 'species', 'h2oFrequency', 'image'])
+    return newPlantObject
+}
+
+async function updatePlant(plant_id, info) {
+    const [updatedPlant] = await db('plants')
+        .where('plant_id', plant_id)
+        .update(info, [
+            'user_id', 'nickname', 'species', 'h2oFrequency', 'image',
+        ])
+        return updatedPlant
+}
+
+async function deletePlant(plant_id) {
+    const deletedPlant = await db('plants').where('plant_id', plant_id)
+    await db('plants').where('plant_id', plant_id).del()
+    return deletedPlant
+}
 
 module.exports = {
-    getPlants,
-    getPlantsById,
-    createPlant,
+    getAllPlants,
+    getPlantById,
+    getByNickname,
+    getBySpecies,
+    addPlant,
     updatePlant,
-    deletePlant,
-
+    deletePlant
+    
 };

@@ -17,8 +17,21 @@ async function findAllUsers() {
     return results
   }
 
+  async function updateUser(user_id, changes) {
+    const [updated] = await db('users')
+      .update(changes, ['user_id', 'username', 'phoneNum', 'password'])
+      .where('user_id', user_id)
+    return updated
+  }
+
+function deleteUser(user_id) {
+  return db('users').where('user_id', user_id).del()
+}
+
   module.exports={
       findAllUsers,
       findByUserId,
-      findPlantsByUserId
+      findPlantsByUserId,
+      updateUser,
+      deleteUser
   }

@@ -1,61 +1,56 @@
 const router = require('express').Router()
 const Plants = require('./plants-model')
-const { checkPlantPayload, checkPlantId} = require('./plants-middleware')
+const { restricted } = require('../auth/auth-middleware')
+const { 
+    checkPlantsPayload,
+    checkPlantIdExists,
+    checkPlantNicknameFree,
+    checkPlantUserIdExists,
+} = require('./plants-middleware')
 
-
-
-//An authenticated user can view a list of created plants
-router.get('/', (req, res, next)=>{
-    
-    Plants.getPlants()
-        .then( plants =>{
-            res.json(plants)
-        })
-        .catch(next)
+router.get('/', restricted, (req, res, next) => {
+    Plants.getAllPlants()
+    .then(plants => {
+        res.status(200).json(plants)
+    })
+    .catch(next)
 })
 
-//an authenticated user can create a new plant object
-router.post('/', checkPlantPayload, async(req, res, next)=>{
-    try{
-        
-        const { nickname, species, h2oFrequency, image, user_id} = req.body
-        const plant = await Plants.createPlant({ nickname: nickname, species: species, h2oFrequency: h2oFrequency, image: image, user_id})
+router.get('/:plant_id', restricted, checkPlantIdExists, (req, res, next) => {
+    Plants.getPlantById(req.params.plant_id)
+    .then(plants => {
+        res.status(200).json(plants).first()
+    })
+    .catch(next)
+})
 
-        if(plant){
-            res.status(201).json(plant)
-        }
-    }catch(err){
-        res.status(500).json(err.message)
+router.post('/', restricted, checkPlantsPayload, checkPlantNicknameFree, checkPlantUserIdExists, async (req, res, next) => {
+    try {
+        res.status(201).json(await Plants.addPlant(req.body))
+    } catch (err) {
+        next(err)
     }
 })
 
-//an authenticated user can update a current plant object
-router.put('/:plant_id', checkPlantPayload, checkPlantId, (req, res, next) =>{
-    const { plant_id} = req.params
-    const revisedPlant = req.body
-
-    Plants.updatePlant(plant_id, revisedPlant)
-    .then(plantObj =>{
-        res.status(200).json(plantObj)
-    })
-    .catch(err =>{
-        res.status(500).json(err.message)
-    })
+router.put('/:plant_id', restricted, checkPlantsPayload, checkPlantUserIdExists, async (req, res, next) => {
+    const id = parseInt(req.params.plant_id)
+    const body = req.body
+    try {
+        const updatedPlant = await Plants.updatePlant(id, body)
+        res.json(updatedPlant)
+    } catch (err) {
+        next(err)
+    }
 })
 
-
-//an authenticated user can delete  a plant object
-
-router.delete('/:plant_id', (req, res, next )=>{
-    const { plant_id } = req.params
-    Plants.deletePlant(plant_id)
-    .then( success =>{
-        res.status(200).json(success)
-    })
-    .catch(err=>{
-        res.status(500).json(err.message)
-    })
+router.delete('/:plant_id', restricted, checkPlantIdExists, async (req, res, next) => {
+    const id = parseInt(req.params.plant_id)
+    try {
+        let deletedPlant = await Plants.deletePlant(id)
+        res.status(200).json(deletedPlant)
+    } catch (err) {
+        next(err)
+    }
 })
-
 
 module.exports = router
