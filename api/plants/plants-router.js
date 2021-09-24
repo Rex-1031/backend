@@ -11,9 +11,7 @@ router.get('/', (req, res, next)=>{
         .then( plants =>{
             res.json(plants)
         })
-        .catch(err =>{
-            res.status(500).json(err.message)
-        })
+        .catch(next)
 })
 
 //an authenticated user can create a new plant object
