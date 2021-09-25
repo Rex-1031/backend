@@ -9,12 +9,11 @@ const plantsRouter = require('./plants/plants-router');
 
 const server =  express();
 
-server.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-  });
+
 server.use(helmet())
-server.use(cors())
+server.use(cors({
+    origin: "*",
+}))
 server.use(express.json())
 
 server.use('/api/auth', authRouter)
