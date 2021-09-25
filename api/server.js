@@ -13,6 +13,8 @@ const server =  express();
 server.use(helmet())
 server.use(cors({
     origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
 }))
 server.use(express.json())
 
