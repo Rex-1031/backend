@@ -2,7 +2,7 @@
   "name": "build-week-scaffolding-node",
   "version": "1.0.0",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "server": "nodemon index.js",
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
