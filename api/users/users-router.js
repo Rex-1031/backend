@@ -1,6 +1,5 @@
 const router = require("express").Router();
-const bcrypt = require("bcryptjs");
-const { checkUserId } = require("./users-middleware");
+
 const { restricted } = require('../auth/auth-middleware')
 
 const User = require('./users-model')
