@@ -16,8 +16,8 @@ server.use(cors())
 server.use(express.json())
 
 server.use('/api/auth',cors(), authRouter)
-server.use('/api/users', userRouter)
-server.use('/api/plants', plantsRouter)
+server.use('/api/users', cors(), userRouter)
+server.use('/api/plants', cors(), plantsRouter)
 
 
 
