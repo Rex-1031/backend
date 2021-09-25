@@ -10,7 +10,7 @@ function find() {
   }
   
   async function insertUser(user) {
-    const [newUser] = await db('users').insert(user, ['user_id', 'username', 'phoneNumber'])
+    const newUser = await db('users').insert(user)
     return newUser 
   }
   
