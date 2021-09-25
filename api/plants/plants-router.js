@@ -2,13 +2,11 @@ const router = require('express').Router()
 const Plants = require('./plants-model')
 const { restricted } = require('../auth/auth-middleware')
 const { 
-    checkPlantsPayload,
-    checkPlantIdExists,
-    checkPlantNicknameFree,
-    checkPlantUserIdExists,
+    checkPlantPayload
+
 } = require('./plants-middleware')
 
-router.get('/', restricted, (req, res, next) => {
+router.get('/',  (req, res, next) => {
     Plants.getAllPlants()
     .then(plants => {
         res.status(200).json(plants)
@@ -16,7 +14,7 @@ router.get('/', restricted, (req, res, next) => {
     .catch(next)
 })
 
-router.get('/:plant_id', restricted, checkPlantIdExists, (req, res, next) => {
+router.get('/:plant_id', (req, res, next) => {
     Plants.getPlantById(req.params.plant_id)
     .then(plants => {
         res.status(200).json(plants).first()
@@ -24,7 +22,7 @@ router.get('/:plant_id', restricted, checkPlantIdExists, (req, res, next) => {
     .catch(next)
 })
 
-router.post('/', restricted, checkPlantsPayload, checkPlantNicknameFree, checkPlantUserIdExists, async (req, res, next) => {
+router.post('/',  checkPlantPayload, async (req, res, next) => {
     try {
         res.status(201).json(await Plants.addPlant(req.body))
     } catch (err) {
@@ -32,7 +30,7 @@ router.post('/', restricted, checkPlantsPayload, checkPlantNicknameFree, checkPl
     }
 })
 
-router.put('/:plant_id', restricted, checkPlantsPayload, checkPlantUserIdExists, async (req, res, next) => {
+router.put('/:plant_id', restricted, checkPlantPayload,  async (req, res, next) => {
     const id = parseInt(req.params.plant_id)
     const body = req.body
     try {
@@ -43,7 +41,7 @@ router.put('/:plant_id', restricted, checkPlantsPayload, checkPlantUserIdExists,
     }
 })
 
-router.delete('/:plant_id', restricted, checkPlantIdExists, async (req, res, next) => {
+router.delete('/:plant_id', restricted,  async (req, res, next) => {
     const id = parseInt(req.params.plant_id)
     try {
         let deletedPlant = await Plants.deletePlant(id)

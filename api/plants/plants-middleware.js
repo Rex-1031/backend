@@ -1,8 +1,8 @@
-const { getPlantsById } = require("./plants-model");
+const { getPlantById } = require("./plants-model");
 
 const checkPlantId = async (req, res, next) => {
     try {
-        const plant = await getPlantsById(req.params.plant_id);
+        const plant = await getPlantById(req.params.plant_id);
         if (!plant) {
             res.status(404).json({ message: `plant with id ${req.params.plant_id} not found` });
         } else {

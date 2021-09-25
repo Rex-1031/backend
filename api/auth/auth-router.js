@@ -30,3 +30,5 @@ router.post('/register', checkUsernameAvailable, (req, res, next) => {
       next({ status: 401, message: 'invalid credentials' })
     }
   })
+
+  module.exports = router
