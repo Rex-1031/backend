@@ -11,11 +11,11 @@ const {
 
 
 router.post('/register', checkSignupPayload, checkUsername, (req, res, next) => {
-    const user = req.body
+    const { username, phoneNumber, password} = req.body
 
     const hash = bcrypt.hashSync(password, 8)
-    user.password = hash
-    User.add({user})
+    
+    User.add({username, phoneNumber, password: hash})
       .then(newUser=>{
         res.status(201).json(newUser)
       })
