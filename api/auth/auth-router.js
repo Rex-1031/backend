@@ -1,34 +1,45 @@
-const router = require("express").Router();
-const bcrypt = require("bcryptjs");
-const Auth = require("./auth-model");
+const router = require('express').Router();
+const bcrypt = require('bcryptjs')
+const tokenBuilder = require('./tokenBuilder')
+const User = require('../users/users-model')
 const {
-    checkUsernameAvailable,
-    checkUsernameExists,
-    buildToken
-} = require("./auth-middleware");
+  checkPayload,
+  checkUsername,
+  checkLogin
+} = require('../middleware/authMiddleware')
 
-router.post('/register', checkUsernameAvailable, (req, res, next) => {
-    const { username, password, phone_num } = req.body
+
+router.post('/register', checkPayload, checkUsername, (req, res, next) => {
+    const { username, phoneNumber, password } = req.body
+
     const hash = bcrypt.hashSync(password, 8)
-  
-    Auth.insertUser({ username, password: hash, phone_num })
-      .then(newUser => {
-        res.status(201).json(newUser)
+
+    User.addUser({username, phoneNumber, password: hash})
+      .then(newUser=>{
+        res.status(200).json(newUser)
       })
       .catch(next)
-  })
-  
-  router.post('/login', checkUsernameExists, (req, res, next) => {
-    if (bcrypt.compareSync(req.body.password, req.password)) {
-      const token = buildToken(req.user)
-      res.status(200).json({
-        user_id: req.user.user_id,
-        message: `welcome, ${req.user.username}`,
-        token,
-      })
-    } else {
-      next({ status: 401, message: 'invalid credentials' })
-    }
-  })
+});
 
-  module.exports = router
+
+
+
+router.post('/login', checkPayload, checkLogin, (req, res, next) => {
+  const { username, password} = req.body
+
+  User.findUser(username)
+    .then(([user])=>{
+      if(user && bcrypt.compareSync(password, user.password)){
+        const token = tokenBuilder(user)
+        res.status(200).json({
+          message: `welcome, ${username}`,
+          token
+        })
+      } else {
+        res.status(401).json({message: 'invalid credentials'})  
+      }
+    })
+    .catch(next)
+});
+
+module.exports = router;

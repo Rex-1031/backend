@@ -4,7 +4,7 @@ const checkPlantId = async (req, res, next) => {
     try {
         const plant = await getPlantById(req.params.plant_id);
         if (!plant) {
-            res.status(404).json({ message: `plant with id ${req.params.plant_id} not found` });
+            res.status(404).json({ message: "plant with id not found" });
         } else {
             next();
         }

@@ -1,9 +1,8 @@
 const router = require('express').Router()
 const Plants = require('./plants-model')
-const { restricted } = require('../auth/auth-middleware')
+
 const { 
     checkPlantPayload
-
 } = require('./plants-middleware')
 
 router.get('/',  (req, res, next) => {
@@ -17,7 +16,7 @@ router.get('/',  (req, res, next) => {
 router.get('/:plant_id', (req, res, next) => {
     Plants.getPlantById(req.params.plant_id)
     .then(plants => {
-        res.status(200).json(plants).first()
+        res.status(200).json(plants)
     })
     .catch(next)
 })
@@ -30,7 +29,7 @@ router.post('/',  checkPlantPayload, async (req, res, next) => {
     }
 })
 
-router.put('/:plant_id', restricted, checkPlantPayload,  async (req, res, next) => {
+router.put('/:plant_id', checkPlantPayload,  async (req, res, next) => {
     const id = parseInt(req.params.plant_id)
     const body = req.body
     try {
@@ -41,7 +40,7 @@ router.put('/:plant_id', restricted, checkPlantPayload,  async (req, res, next) 
     }
 })
 
-router.delete('/:plant_id', restricted,  async (req, res, next) => {
+router.delete('/:plant_id',   async (req, res, next) => {
     const id = parseInt(req.params.plant_id)
     try {
         let deletedPlant = await Plants.deletePlant(id)

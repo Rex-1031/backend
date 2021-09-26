@@ -7,7 +7,7 @@ async function getAllPlants() {
 
 function getPlantById(plant_id) {
     return db('plants as p')
-    .select('p.user_id', 'p.nickname', 'p.species', 'p.h2oFrequency', 'p.image')
+    .select( 'p.nickname', 'p.species', 'p.h2oFrequency', 'p.image')
     .where('p.plant_id', plant_id).first()
 }
 
@@ -21,7 +21,7 @@ function getBySpecies(filter) {
 }
 
 async function addPlant(plant) {
-    const [newPlantObject] = await db('plants').insert(plant, ['user_id', 'nickname', 'species', 'h2oFrequency', 'image'])
+    const [newPlantObject] = await db('plants').insert(plant, ['nickname', 'species', 'h2oFrequency', 'image'])
     return newPlantObject
 }
 
@@ -29,7 +29,7 @@ async function updatePlant(plant_id, info) {
     const [updatedPlant] = await db('plants')
         .where('plant_id', plant_id)
         .update(info, [
-            'user_id', 'nickname', 'species', 'h2oFrequency', 'image',
+        'nickname', 'species', 'h2oFrequency', 'image',
         ])
         return updatedPlant
 }
