@@ -3,13 +3,14 @@ const bcrypt = require('bcryptjs')
 const tokenBuilder = require('./tokenBuilder')
 const User = require('../users/users-model')
 const {
-  checkPayload,
+  checkLoginPayload,
+  checkSignupPayload,
   checkUsername,
   checkLogin
 } = require('../middleware/authMiddleware')
 
 
-router.post('/register', checkPayload, checkUsername, (req, res, next) => {
+router.post('/register', checkSignupPayload, checkUsername, (req, res, next) => {
     const { username, phoneNumber, password } = req.body
 
     const hash = bcrypt.hashSync(password, 8)
@@ -24,7 +25,7 @@ router.post('/register', checkPayload, checkUsername, (req, res, next) => {
 
 
 
-router.post('/login', checkPayload, checkLogin, (req, res, next) => {
+router.post('/login', checkLogin, checkLoginPayload, (req, res, next) => {
   const { username, password} = req.body
 
   User.getBy(username)

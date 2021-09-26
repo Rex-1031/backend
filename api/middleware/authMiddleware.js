@@ -2,7 +2,7 @@ const Users = require('../users/users-model')
 
 //on failed registration/login if username or password is missing
 
-const checkPayload = (req, res, next)=>{
+const checkLoginPayload = (req, res, next)=>{
     try{
         const { username, password } = req.body
         if(!username || !password){
@@ -16,11 +16,25 @@ const checkPayload = (req, res, next)=>{
         next(err)
     }
 }
-
+const checkSignupPayload = (req, res, next)=>{
+    try{
+        const { username, phoneNumber, password } = req.body
+        if(!username|| !phoneNumber || !password){
+            res.status(404).json({message: 'all fields required'})
+        }else{
+            req.username = username
+            req.phoneNumber = phoneNumber
+            req.password = password
+            next()
+        }
+    }catch(err){
+        next(err)
+    }
+}
 //checks for usernames that exist and fails reqistration if true
 const checkUsername = async (req, res, next) =>{
     try{
-    const userExisits = await Users.findUser(req.body.username)
+    const userExisits = await Users.getBy(req.body.username)
     if(!userExisits.length){
         next()
     }else{
@@ -34,7 +48,7 @@ const checkUsername = async (req, res, next) =>{
 
 const checkLogin = async (req, res, next) =>{
     try{
-        const user = await Users.findUser(req.body.username)
+        const user = await Users.getBy(req.body.username)
         const password = await Users.pwValidation(req.body.password)
         if (!user || !password){
             res.status(400).json({message: 'invalid credentials' }) 
@@ -49,6 +63,7 @@ const checkLogin = async (req, res, next) =>{
 
 module.exports ={
     checkLogin,
-    checkPayload,
+    checkLoginPayload,
+    checkSignupPayload,
     checkUsername
 }
