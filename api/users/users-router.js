@@ -36,16 +36,6 @@ router.put('/:user_id', (req, res, next)=>{
         .catch(next)
 })
 
-router.delete('/:user_id', (req, res, next)=>{
-    User.deleteUser(req.params.user_id)
-        .then(()=>{
-            res.status(200).json({
-                message: 'User Deleted'
-            })
-        })
-        .catch(next)
-})
-
 
 
 
