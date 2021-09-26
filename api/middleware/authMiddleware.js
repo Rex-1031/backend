@@ -22,9 +22,7 @@ const checkSignupPayload = (req, res, next)=>{
         if(!username|| !phoneNumber || !password){
             res.status(404).json({message: 'all fields required'})
         }else{
-            req.username = username
-            req.phoneNumber = phoneNumber
-            req.password = password
+            
             next()
         }
     }catch(err){
