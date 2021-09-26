@@ -5,7 +5,7 @@ const { restricted } = require('../middleware/authMiddleware')
 const User = require('./users-model')
 
 router.get('/',  (req, res, next)=>{
-    User.findAll()
+    User.get()
     .then(users =>{
         res.status(200).json(users)
     })
@@ -13,7 +13,7 @@ router.get('/',  (req, res, next)=>{
 })
 
 router.get('/:user_id', (req, res, next)=>{
-    User.findById(req.params.user_id)
+    User.getById(req.params.user_id)
     .then(user =>{
         res.status(200).json(user)
     })
@@ -21,7 +21,7 @@ router.get('/:user_id', (req, res, next)=>{
 })
 
 router.get('/:user_id/plants', (req, res, next)=>{
-    User.findPlantsByUserId(req.params.user_id)
+    User.getUserPlants(req.params.user_id)
     .then(plants =>{
         res.status(200).json(plants)
     })
@@ -29,7 +29,7 @@ router.get('/:user_id/plants', (req, res, next)=>{
 })
 
 router.put('/:user_id', (req, res, next)=>{
-    User.updateUser(req.params.user_id, req.body)
+    User.update(req.params.user_id, req.body)
         .then(updated =>{
             res.status(200).json(updated)
         })

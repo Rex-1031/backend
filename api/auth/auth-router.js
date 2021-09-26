@@ -14,7 +14,7 @@ router.post('/register', checkPayload, checkUsername, (req, res, next) => {
 
     const hash = bcrypt.hashSync(password, 8)
 
-    User.addUser({username, phoneNumber, password: hash})
+    User.add({username, phoneNumber, password: hash})
       .then(newUser=>{
         res.status(200).json(newUser)
       })
@@ -27,7 +27,7 @@ router.post('/register', checkPayload, checkUsername, (req, res, next) => {
 router.post('/login', checkPayload, checkLogin, (req, res, next) => {
   const { username, password} = req.body
 
-  User.findUser(username)
+  User.getBy(username)
     .then(([user])=>{
       if(user && bcrypt.compareSync(password, user.password)){
         const token = tokenBuilder(user)
